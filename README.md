@@ -9,9 +9,8 @@ Simple chatbot for querying metadata of designs in [Autodesk Platform Services](
 ### Prerequisites
 
 - [APS credentials](https://aps.autodesk.com/en/docs/oauth/v2/tutorials/create-app)
-- AWS credentials with access to Amazon Bedrock
-- Provisioned access to [BIM 360 Docs](https://aps.autodesk.com/en/docs/bim360/v1/tutorials/getting-started/manage-access-to-docs/)
-or Autodesk Construction Cloud
+- [Provisioned access to BIM360 or ACC](https://aps.autodesk.com/en/docs/bim360/v1/tutorials/getting-started/manage-access-to-docs/)
+- AWS credentials with access to [Amazon Bedrock](https://aws.amazon.com/bedrock)
 - [Node.js](https://nodejs.org) (Long Term Support version is recommended)
 - Command-line terminal such as [PowerShell](https://learn.microsoft.com/en-us/powershell/scripting/overview)
 or [bash](https://en.wikipedia.org/wiki/Bash_(Unix_shell))
@@ -27,7 +26,6 @@ or [bash](https://en.wikipedia.org/wiki/Bash_(Unix_shell))
     - For local development, it should be http://localhost:8080/auth/callback
     - Don't forget to add the same URL to your APS application in https://aps.autodesk.com/myapps as well
   - `SERVER_SESSION_SECRET` - custom phrase used to encrypt/decrypt cookies
-  - `AWS_ACCESS_KEY_ID` - your AWS access key ID
-  - `AWS_SECRET_ACCESS_KEY` - your AWS secret access key
+- Configure the AWS credentials ([guide](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/setting-credentials-node.html))
 - Run the server: `npm start`
 - Go to http://localhost:8080
