@@ -23,8 +23,7 @@
             ],
             "program": "${workspaceFolder}/test/bedrock.js",
             "args": [
-                "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6cGV0cmJyb3otZGF0YXNhbXBsZXMvYmFzaWMucnZ0",
-                "Which object has the largest area?"
+                "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6cGV0cmJyb3otZGF0YXNhbXBsZXMvYmFzaWMucnZ0"
             ],
             "envFile": "${workspaceFolder}/.env"
         }

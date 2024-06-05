@@ -3,16 +3,16 @@ const session = require('cookie-session');
 const { SdkManagerBuilder } = require('@aps_sdk/autodesk-sdkmanager');
 const { AuthenticationClient, Scopes, ResponseType } = require('@aps_sdk/authentication');
 const { getDesignViews, getDesignProperties } = require("./lib/aps.js");
-const { prompt } = require("./lib/bedrock.js");
+const { ChatbotSession } = require("./lib/bedrock.js");
 
-const { APS_CLIENT_ID, APS_CLIENT_SECRET, APS_CALLBACK_URL, SERVER_SESSION_SECRET } = process.env;
-if (!APS_CLIENT_ID || !APS_CLIENT_SECRET || !APS_CALLBACK_URL || !SERVER_SESSION_SECRET) {
+const { APS_CLIENT_ID, APS_CLIENT_SECRET, APS_CALLBACK_URL, SERVER_SESSION_SECRET, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY } = process.env;
+if (!APS_CLIENT_ID || !APS_CLIENT_SECRET || !APS_CALLBACK_URL || !SERVER_SESSION_SECRET || !AWS_ACCESS_KEY_ID || !AWS_SECRET_ACCESS_KEY) {
     console.error("Missing some of the environment variables.");
     process.exit(1);
 }
 const PORT = process.env.PORT || 8080;
 
-function buildQuery(properties, query) {
+function dumpDesignProperties(properties) {
     const MAX_ELEMENTS = 256;
     const input = [
         "I have the following list of objects:",
@@ -28,14 +28,13 @@ function buildQuery(properties, query) {
             elements++;
         }
     }
-    input.push("");
-    input.push(query);
     return input.join("\n");
 }
 
 const sdk = SdkManagerBuilder.create().build();
 const authenticationClient = new AuthenticationClient(sdk);
 
+let sessions = new Map();
 let app = express();
 app.use(express.static("wwwroot"));
 app.use(session({ secret: SERVER_SESSION_SECRET, maxAge: 24 * 60 * 60 * 1000 }));
@@ -96,13 +95,16 @@ app.get("/auth/token", function (req, res, next) {
 });
 app.post("/prompt/:urn", express.json(), async function (req, res, next) {
     try {
-        const views = await getDesignViews(req.params.urn, req.session.access_token);
-        if (views.length === 0) {
-            throw new Error("Design has no views.");
+        let session = sessions.get(req.params.urn);
+        if (!session) {
+            session = new ChatbotSession();
+            sessions.set(req.params.urn, session);
+            const views = await getDesignViews(req.params.urn, req.session.access_token);
+            console.assert(views.length > 0);
+            const properties = await getDesignProperties(req.params.urn, views[0].guid, req.session.access_token);
+            await session.prompt(dumpDesignProperties(properties));
         }
-        const properties = await getDesignProperties(req.params.urn, views[0].guid, req.session.access_token);
-        const query = buildQuery(properties, req.body.question);
-        const answer = await prompt(query);
+        const answer = await session.prompt(req.body.question);
         res.json({ answer });
     } catch (err) {
         next(err);
