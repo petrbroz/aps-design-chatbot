@@ -2,7 +2,7 @@ const express = require("express");
 const session = require('cookie-session');
 const { SdkManagerBuilder } = require('@aps_sdk/autodesk-sdkmanager');
 const { AuthenticationClient, Scopes, ResponseType } = require('@aps_sdk/authentication');
-const { getDesignViews, getDesignProperties } = require("./lib/aps.js");
+const { getDesignViews, getSelectedDesignProperties } = require("./lib/aps.js");
 const { ChatbotSession } = require("./lib/bedrock.js");
 
 const { APS_CLIENT_ID, APS_CLIENT_SECRET, APS_CALLBACK_URL, SERVER_SESSION_SECRET, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY } = process.env;
@@ -13,14 +13,13 @@ if (!APS_CLIENT_ID || !APS_CLIENT_SECRET || !APS_CALLBACK_URL || !SERVER_SESSION
 const PORT = process.env.PORT || 8080;
 
 function dumpDesignProperties(properties) {
-    const MAX_ELEMENTS = 256;
     const input = [
         "I have the following list of objects:",
         ""
     ];
     let elements = 0;
     for (const record of properties) {
-        if (record.properties["Dimensions"] && record.properties["Dimensions"]["Area"] && elements < MAX_ELEMENTS) {
+        if (record.properties["Dimensions"]) {
             input.push(`Object ID ${record.objectid}:`);
             for (const [key, value] of Object.entries(record.properties["Dimensions"])) {
                 input.push(`  - ${key}: ${value}`);
@@ -101,7 +100,7 @@ app.post("/prompt/:urn", express.json(), async function (req, res, next) {
             sessions.set(req.params.urn, session);
             const views = await getDesignViews(req.params.urn, req.session.access_token);
             console.assert(views.length > 0);
-            const properties = await getDesignProperties(req.params.urn, views[0].guid, req.session.access_token);
+            const properties = await getSelectedDesignProperties(req.params.urn, views[0].guid, ["objectid", "properties.Dimensions.*"], req.session.access_token);
             await session.prompt(dumpDesignProperties(properties));
         }
         const answer = await session.prompt(req.body.question);
