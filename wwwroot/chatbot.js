@@ -35,6 +35,9 @@ function addLogEntry(message) {
     entry.style.padding = "0.5em";
     entry.style.borderRadius = "0.5em";
     entry.style.backgroundColor = "#eee";
-    entry.innerText = message;
+    entry.innerHTML = message.replaceAll(/\[(\d+)(,\s+\d+)*\]/g, function (match) {
+        const dbids = JSON.parse(match);
+        return `<a href="#" data-dbids="${dbids.join(",")}">${match}</a>`;
+    });
     document.getElementById("chatbot-log").appendChild(entry);
 }
