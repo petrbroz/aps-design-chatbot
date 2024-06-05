@@ -2,7 +2,9 @@
   "name": "aps-design-chatbot",
   "description": "",
   "version": "0.0.0",
-  "scripts": {},
+  "scripts": {
+    "start": "node server.js"
+  },
   "keywords": [
     "autodesk-platform-services",
     "amazon-web-services"
