@@ -12,24 +12,38 @@ export function initChatbot(container, urn) {
     const input = document.getElementById("chatbot-input");
     const button = document.getElementById("chatbot-send");
     button.addEventListener("click", async function () {
-        addLogEntry("User", input.value);
-        const resp = await fetch(`/prompt/${urn}`, {
-            method: "post",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                question: input.value
-            })
-        });
-        if (resp.ok) {
-            const { answer } = await resp.json();
+        const prompt = input.value;
+        addLogEntry("User", prompt);
+        input.value = "";
+        input.setAttribute("disabled", "true");
+        button.innerText = "Thinking...";
+        button.setAttribute("disabled", "true");
+        try {
+            const answer = await submitPrompt(urn, prompt);
             addLogEntry("Assistant", answer);
-        } else {
-            console.error(await resp.text());
+        } catch (err) {
+            console.error(err);
             alert("Unable to process the query. See console for more details.");
+        } finally {
+            input.removeAttribute("disabled");
+            button.innerText = "Send";
+            button.removeAttribute("disabled");
         }
     });
+}
+
+async function submitPrompt(urn, question) {
+    const resp = await fetch(`/prompt/${urn}`, {
+        method: "post",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question })
+    });
+    if (resp.ok) {
+        const { answer } = await resp.json();
+        return answer;
+    } else {
+        throw new Error(await resp.text());
+    }
 }
 
 function addLogEntry(title, message) {
@@ -41,5 +55,7 @@ function addLogEntry(title, message) {
         return `<a href="#" data-dbids="${dbids.join(",")}">${match}</a>`;
     });
     card.innerHTML = `<div slot="header">${title}</div>${message}`;
-    document.getElementById("chatbot-history").appendChild(card);
+    const _history = document.getElementById("chatbot-history");
+    _history.appendChild(card);
+    _history.scrollTop = _history.scrollHeight;
 }

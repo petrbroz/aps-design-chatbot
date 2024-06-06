@@ -1,10 +1,15 @@
+:root {
+    --sl-font-sans: ArtifaktElement;
+    --sl-font-mono: ArtifaktElement;
+}
+
 body {
     margin: 0;
     padding: 0;
     width: 100vw;
     height: 100vh;
     display: grid;
-    grid-template-rows: 3em 1fr;
+    grid-template-rows: 4em 1fr;
     grid-template-columns: 20em 1fr 30em;
     grid-template-areas:
         "header header header"
@@ -49,6 +54,6 @@ input, button, textarea {
 #header .title {
     height: auto;
     margin-right: auto;
-    font-weight: bold;
+    font-weight: 500;
     font-size: large;
 }
