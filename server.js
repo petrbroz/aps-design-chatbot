@@ -11,23 +11,18 @@ if (!APS_CLIENT_ID || !APS_CLIENT_SECRET || !APS_CALLBACK_URL || !SERVER_SESSION
     process.exit(1);
 }
 const PORT = process.env.PORT || 8080;
+const MAX_ELEMENTS = 512;
+const PROPERTY_CATEGORY = "Dimensions";
+const PROPERTY_NAMES = ["Width", "Height", "Length", "Area", "Volume"];
 
-function dumpDesignProperties(properties) {
-    const input = [
-        "I have the following list of objects:",
-        ""
-    ];
-    let elements = 0;
-    for (const record of properties) {
-        if (record.properties["Dimensions"]) {
-            input.push(`Object ID ${record.objectid}:`);
-            for (const [key, value] of Object.entries(record.properties["Dimensions"])) {
-                input.push(`  - ${key}: ${value}`);
-            }
-            elements++;
-        }
-    }
-    return input.join("\n");
+function dumpDesignProperties(props) {
+    const csv = props.slice(0, MAX_ELEMENTS).map(({ objectid, name, properties }) => [
+        objectid,
+        `"${name}"`,
+        ...PROPERTY_NAMES.map(name => properties[PROPERTY_CATEGORY] && properties[PROPERTY_CATEGORY][name] ? parseFloat(properties[PROPERTY_CATEGORY][name]) : "")
+    ].join(","));
+    csv.unshift(["id", "name", ...PROPERTY_NAMES].join(","));
+    return csv.join("\n");
 }
 
 const sdk = SdkManagerBuilder.create().build();
@@ -100,8 +95,13 @@ app.post("/prompt/:urn", express.json(), async function (req, res, next) {
             sessions.set(req.params.urn, session);
             const views = await getDesignViews(req.params.urn, req.session.access_token);
             console.assert(views.length > 0);
-            const properties = await getSelectedDesignProperties(req.params.urn, views[0].guid, ["objectid", "properties.Dimensions.*"], req.session.access_token);
-            await session.prompt(dumpDesignProperties(properties));
+            const props = await getSelectedDesignProperties(req.params.urn, views[0].guid, ["objectid", "name", `properties.${PROPERTY_CATEGORY}.*`], req.session.access_token);
+            const csv = dumpDesignProperties(props);
+            await session.prompt([
+                "Here is a CSV table of design elements with various properties:",
+                csv,
+                "You are a data analyst providing answers to different queries related to this data."
+            ].join("\n\n"));
         }
         const answer = await session.prompt(req.body.question);
         res.json({ answer });
