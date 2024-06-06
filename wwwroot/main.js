@@ -14,10 +14,11 @@ try {
             const urn = window.btoa(id).replace(/=/g, "").replace("/", "_");
             loadModel(viewer, urn);
             initChatbot(document.getElementById("chatbot"), urn);
-            document.getElementById("chatbot").addEventListener("click", function (ev) {
-                const { dbids } = ev.target.dataset;
-                if (dbids) {
-                    viewer.isolate(dbids.split(",").map(el => parseInt(el)));
+            document.getElementById("chatbot").addEventListener("click", function ({ target }) {
+                if (target.dataset.dbids) {
+                    const dbids = target.dataset.dbids.split(",").map(e => parseInt(e));
+                    viewer.isolate(dbids);
+                    viewer.fitToView(dbids);
                 }
             });
         });
