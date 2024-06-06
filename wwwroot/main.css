@@ -5,13 +5,17 @@ body, html {
     font-family: ArtifaktElement;
 }
 
-#header, #left-sidebar, #right-sidebar, #preview {
-    position: absolute;
+input, button, textarea {
+    font-family: ArtifaktElement;
+    font-size: 1em;
 }
 
 #header {
+    position: absolute;
+    top: 0;
     height: 3em;
-    width: 100%;
+    left: 0;
+    right: 0;
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-between;
@@ -19,25 +23,30 @@ body, html {
 }
 
 #left-sidebar {
-    width: 15%;
-    left: 0;
+    position: absolute;
     top: 3em;
+    left: 0;
+    width: 20%;
     bottom: 0;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 #right-sidebar {
-    width: 25%;
-    right: 0;
+    position: absolute;
     top: 3em;
+    right: 0;
+    width: 25%;
     bottom: 0;
+    overflow-y: auto;
 }
 
 #preview {
-    left: 15%;
+    position: absolute;
+    left: 20%;
     right: 25%;
     top: 3em;
     bottom: 0;
+    overflow: hidden;
 }
 
 #header > * {
@@ -45,18 +54,11 @@ body, html {
     margin: 0 0.5em;
 }
 
-#login {
-    font-family: ArtifaktElement;
-    font-size: 1em;
-}
-
 #header .title {
     height: auto;
     margin-right: auto;
-}
-
-#tree, #chatbot {
-    margin: 0.5em;
+    font-weight: bold;
+    font-size: large;
 }
 
 .icon-hub:before {

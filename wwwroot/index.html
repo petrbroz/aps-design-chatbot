@@ -5,8 +5,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/x-icon" href="https://cdn.autodesk.io/favicon.ico">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.15.1/cdn/themes/light.css" />
+    <script type="module"
+        src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.15.1/cdn/shoelace-autoloader.js"></script>
     <link rel="stylesheet" href="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/style.css">
-    <link rel="stylesheet" href="https://unpkg.com/inspire-tree-dom@4.0.6/dist/inspire-tree-light.min.css">
     <link rel="stylesheet" href="/main.css">
 
     <title>Autodesk Platform Services: Design Chatbot</title>
@@ -16,19 +18,16 @@
     <div id="header">
         <img class="logo" src="https://cdn.autodesk.io/logo/black/stacked.png" alt="Autodesk Platform Services">
         <span class="title">Design Chatbot</span>
-        <button id="login" style="visibility: hidden;">Login</button>
+        <sl-button id="login" variant="default" style="visibility: hidden;">Login</sl-button>
     </div>
     <div id="left-sidebar">
-        <div id="tree"></div>
+        <sl-tree id="tree"></sl-tree>
     </div>
     <div id="preview"></div>
     <div id="right-sidebar">
         <div id="chatbot"></div>
     </div>
     <script src="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/viewer3D.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
-    <script src="https://unpkg.com/inspire-tree@4.3.1/dist/inspire-tree.js"></script>
-    <script src="https://unpkg.com/inspire-tree-dom@4.0.6/dist/inspire-tree-dom.min.js"></script>
     <script src="/main.js" type="module"></script>
 </body>
 

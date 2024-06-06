@@ -10,7 +10,7 @@ try {
         login.innerText = `Logout (${user.name})`;
         login.onclick = () => window.location.replace("/auth/logout");
         const viewer = await initViewer(document.getElementById("preview"));
-        initBrowser("#tree", (id) => {
+        initBrowser(document.getElementById("tree"), (id) => {
             const urn = window.btoa(id).replace(/=/g, "").replace("/", "_");
             loadModel(viewer, urn);
             initChatbot(document.getElementById("chatbot"), urn);

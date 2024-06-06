@@ -21,7 +21,7 @@ class DataManagementClient {
         const { data } = await resp.json();
         return data;
     }
-    
+
     getHubs() {
         return this.#get(`/project/v1/hubs`);
     }
@@ -43,42 +43,60 @@ class DataManagementClient {
 
 const dataManagementClient = new DataManagementClient();
 
-export function initBrowser(selector, onSelectionChanged) {
-    const tree = new InspireTree({ // http://inspire-tree.com
-        data: async function (node) {
-            const createTreeNode = (id, text, icon, children = false) => ({ id, text, children, itree: { icon } });
-            if (!node || !node.id) {
-                return dataManagementClient.getHubs().then(hubs => hubs.map(hub => createTreeNode(`hub|${hub.id}`, hub.attributes.name, "icon-hub", true)))
-            } else {
-                const tokens = node.id.split("|");
-                switch (tokens[0]) {
-                    case "hub":
-                        return dataManagementClient.getProjects(tokens[1])
-                            .then(projects => projects.map(project => createTreeNode(`project|${tokens[1]}|${project.id}`, project.attributes.name, "icon-project", true)));
-                    case "project":
-                    case "folder":
-                        return dataManagementClient.getContents(tokens[1], tokens[2], tokens[3])
-                            .then(items => items.map(item => {
-                                if (item.type === "folders") {
-                                    return createTreeNode(`folder|${tokens[1]}|${tokens[2]}|${item.id}`, item.attributes.displayName, "icon-my-folder", true);
-                                } else {
-                                    return createTreeNode(`item|${tokens[1]}|${tokens[2]}|${item.id}`, item.attributes.displayName, "icon-item", true);
-                                }
-                            }));
-                    case "item":
-                        return dataManagementClient.getVersions(tokens[1], tokens[2], tokens[3])
-                            .then(versions => versions.map(version => createTreeNode(`version|${version.id}`, version.attributes.createTime, "icon-version")));
-                    default: return [];
+export async function initBrowser(tree, onSelectionChanged) {
+    const hubs = await dataManagementClient.getHubs();
+    for (const hub of hubs) {
+        tree.append(createTreeItem(`hub|${hub.id}`, hub.attributes.name, "cloud", true));
+    }
+    tree.addEventListener("sl-selection-change", function (ev) {
+        const selection = ev.detail.selection;
+        if (selection.length === 1 && selection[0].id.startsWith("version|")) {
+            onSelectionChanged(selection[0].id.substring(8));
+        }
+    });
+}
+
+function createTreeItem(id, text, icon, children = false) {
+    const item = document.createElement("sl-tree-item");
+    item.id = id;
+    item.innerHTML = `<sl-icon name="${icon}"></sl-icon><span style="white-space: nowrap">${text}</span>`;
+    if (children) {
+        item.lazy = true;
+        item.addEventListener("sl-lazy-load", async function (ev) {
+            ev.stopPropagation();
+            item.lazy = false;
+            const tokens = item.id.split("|");
+            switch (tokens[0]) {
+                case "hub": {
+                    for (const project of await dataManagementClient.getProjects(tokens[1])) {
+                        item.append(createTreeItem(`project|${tokens[1]}|${project.id}`, project.attributes.name, "building", true));
+                    }
+                    break;
+                }
+                case "project": {
+                    for (const folder of await dataManagementClient.getContents(tokens[1], tokens[2])) {
+                        item.append(createTreeItem(`folder|${tokens[1]}|${tokens[2]}|${folder.id}`, folder.attributes.displayName, "folder", true));
+                    }
+                    break;
+                }
+                case "folder": {
+                    for (const entry of await dataManagementClient.getContents(tokens[1], tokens[2], tokens[3])) {
+                        if (entry.type === "folders") {
+                            item.append(createTreeItem(`folder|${tokens[1]}|${tokens[2]}|${entry.id}`, entry.attributes.displayName, "folder", true));
+                        } else {
+                            item.append(createTreeItem(`item|${tokens[1]}|${tokens[2]}|${entry.id}`, entry.attributes.displayName, "file-earmark-richtext", true));
+                        }
+                    }
+                    break;
+                }
+                case "item": {
+                    for (const version of await dataManagementClient.getVersions(tokens[1], tokens[2], tokens[3])) {
+                        item.append(createTreeItem(`version|${version.id}`, version.attributes.createTime, "clock-history"));
+                    }
+                    break;
                 }
             }
-        }
-    });
-    tree.on("node.click", function (event, node) {
-        event.preventTreeDefault();
-        const tokens = node.id.split("|");
-        if (tokens[0] === "version") {
-            onSelectionChanged(tokens[1]);
-        }
-    });
-    return new InspireTreeDOM(tree, { target: selector });
+        });
+    }
+    return item;
 }
