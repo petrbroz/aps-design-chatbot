@@ -17,6 +17,7 @@ export function initViewer(container, extensions) {
             const viewer = new Autodesk.Viewing.GuiViewer3D(container, { extensions });
             viewer.start();
             viewer.setTheme("light-theme");
+            viewer.setEnvMapBackground(false);
             resolve(viewer);
         });
     });
