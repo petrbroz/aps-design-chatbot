@@ -26,6 +26,6 @@ or [bash](https://en.wikipedia.org/wiki/Bash_(Unix_shell))
     - For local development, it should be http://localhost:8080/auth/callback
     - Don't forget to add the same URL to your APS application in https://aps.autodesk.com/myapps as well
   - `SERVER_SESSION_SECRET` - custom phrase used to encrypt/decrypt cookies
-- Configure the AWS credentials ([guide](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/setting-credentials-node.html))
+- Configure the AWS credentials ([guide](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/setting-credentials-node.html)) and region
 - Run the server: `npm start`
 - Go to http://localhost:8080
