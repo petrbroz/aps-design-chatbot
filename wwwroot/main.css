@@ -1,7 +1,14 @@
-body, html {
+body {
     margin: 0;
     padding: 0;
+    width: 100vw;
     height: 100vh;
+    display: grid;
+    grid-template-rows: 3em 1fr;
+    grid-template-columns: 20em 1fr 30em;
+    grid-template-areas:
+        "header header header"
+        "left center right";
     font-family: ArtifaktElement;
 }
 
@@ -11,42 +18,27 @@ input, button, textarea {
 }
 
 #header {
-    position: absolute;
-    top: 0;
-    height: 3em;
-    left: 0;
-    right: 0;
+    grid-area: header;
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-between;
     align-items: center;
 }
 
-#left-sidebar {
-    position: absolute;
-    top: 3em;
-    left: 0;
-    width: 20%;
-    bottom: 0;
-    overflow-y: auto;
-}
-
-#right-sidebar {
-    position: absolute;
-    top: 3em;
-    right: 0;
-    width: 25%;
-    bottom: 0;
+#browser {
+    grid-area: left;
     overflow-y: auto;
 }
 
 #preview {
-    position: absolute;
-    left: 20%;
-    right: 25%;
-    top: 3em;
-    bottom: 0;
+    position: relative;
+    grid-area: center;
     overflow: hidden;
+}
+
+#chatbot {
+    grid-area: right;
+    overflow-y: auto;
 }
 
 #header > * {
@@ -59,30 +51,4 @@ input, button, textarea {
     margin-right: auto;
     font-weight: bold;
     font-size: large;
-}
-
-.icon-hub:before {
-    background-image: url(https://raw.githubusercontent.com/primer/octicons/main/icons/apps-16.svg); /* or https://raw.githubusercontent.com/primer/octicons/main/icons/stack-16.svg */
-    background-size: cover;
-}
-
-.icon-project:before {
-    
-    background-image: url(https://raw.githubusercontent.com/primer/octicons/main/icons/project-16.svg); /* or https://raw.githubusercontent.com/primer/octicons/main/icons/organization-16.svg */
-    background-size: cover;
-}
-
-.icon-my-folder:before {
-    background-image: url(https://raw.githubusercontent.com/primer/octicons/main/icons/file-directory-16.svg);
-    background-size: cover;
-}
-
-.icon-item:before {
-    background-image: url(https://raw.githubusercontent.com/primer/octicons/main/icons/file-16.svg);
-    background-size: cover;
-}
-
-.icon-version:before {
-    background-image: url(https://raw.githubusercontent.com/primer/octicons/main/icons/clock-16.svg);
-    background-size: cover;
 }

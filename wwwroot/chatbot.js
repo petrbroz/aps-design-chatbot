@@ -1,10 +1,12 @@
 export function initChatbot(container, urn) {
     container.innerHTML = `
-        <div id="chatbot-history" style="position: absolute; top: 0; left: 0; right: 0; bottom: 10em; overflow-y: auto; display: flex; flex-flow: column nowrap;">
-        </div>
-        <div id="chatbot-prompt" style="position: absolute; left: 0; right: 0; bottom: 0; height: 10em; display: flex; flex-flow: column nowrap;">
-            <textarea id="chatbot-input" style="margin: 0.5em; margin-bottom: 0; height: 100%;">What is the average area of all objects?</textarea>
-            <sl-button id="chatbot-send" variant="primary" style="margin: 0.5em;">Send</sl-button>
+        <div style="width: 100%; height: 100%;">
+            <div id="chatbot-history" style="position: relative; top: 0; left: 0; right: 0; height: 80%; overflow-y: auto; display: flex; flex-flow: column nowrap;">
+            </div>
+            <div id="chatbot-prompt" style="position: relative; left: 0; right: 0; bottom: 0; height: 20%; overflow-y: hidden; display: flex; flex-flow: column nowrap;">
+                <textarea id="chatbot-input" style="margin: 0.5em; margin-bottom: 0; height: 100%;">What is the average area of all objects?</textarea>
+                <sl-button id="chatbot-send" variant="primary" style="margin: 0.5em;">Send</sl-button>
+            </div>
         </div>
     `;
     const input = document.getElementById("chatbot-input");
