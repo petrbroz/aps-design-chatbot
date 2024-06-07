@@ -2,7 +2,7 @@ const express = require("express");
 const session = require("cookie-session");
 const { SdkManagerBuilder } = require("@aps_sdk/autodesk-sdkmanager");
 const { AuthenticationClient, Scopes, ResponseType } = require("@aps_sdk/authentication");
-const { getDesignViews, getSelectedDesignProperties } = require("./lib/aps.js");
+const { dumpDesignProperties } = require("./lib/aps.js");
 const { ChatbotSession } = require("./lib/bedrock.js");
 
 const { APS_CLIENT_ID, APS_CLIENT_SECRET, APS_CALLBACK_URL, SERVER_SESSION_SECRET } = process.env;
@@ -11,27 +11,6 @@ if (!APS_CLIENT_ID || !APS_CLIENT_SECRET || !APS_CALLBACK_URL || !SERVER_SESSION
     process.exit(1);
 }
 const PORT = process.env.PORT || 8080;
-
-/**
- * Converts a subset of selected properties of a design in Autodesk Platform Services into a CSV table.
- * @param {string} urn Design URN.
- * @param {string} guid Viewable GUID.
- * @param {string} accessToken Access token.
- * @returns CSV table.
- */
-async function dumpDesignProperties(urn, guid, accessToken) {
-    const MAX_ELEMENTS = 512;
-    const PROPERTY_CATEGORY = "Dimensions";
-    const PROPERTY_NAMES = ["Width", "Height", "Length", "Area", "Volume"];
-    const props = await getSelectedDesignProperties(urn, guid, ["objectid", "name", `properties.${PROPERTY_CATEGORY}.*`], accessToken);
-    const csv = props.slice(0, MAX_ELEMENTS).map(({ objectid, name, properties }) => [
-        objectid,
-        `"${name}"`,
-        ...PROPERTY_NAMES.map(name => properties[PROPERTY_CATEGORY] && properties[PROPERTY_CATEGORY][name] ? parseFloat(properties[PROPERTY_CATEGORY][name]) : "")
-    ].join(","));
-    csv.unshift(["id", "name", ...PROPERTY_NAMES].join(","));
-    return csv.join("\n");
-}
 
 const sdk = SdkManagerBuilder.create().build();
 const authenticationClient = new AuthenticationClient(sdk);
@@ -96,9 +75,7 @@ app.post("/prompt/:urn", express.json(), async function (req, res, next) {
         if (!session) {
             session = new ChatbotSession();
             sessions.set(req.params.urn, session);
-            const views = await getDesignViews(req.params.urn, req.session.access_token);
-            console.assert(views.length > 0);
-            const csv = await dumpDesignProperties(req.params.urn, views[0].guid, req.session.access_token);
+            const csv = await dumpDesignProperties(req.params.urn, req.session.access_token);
             await session.prompt([
                 "Here is a CSV table of design elements with various properties:",
                 csv,
