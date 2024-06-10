@@ -3,7 +3,7 @@ const session = require("cookie-session");
 const { SdkManagerBuilder } = require("@aps_sdk/autodesk-sdkmanager");
 const { AuthenticationClient, Scopes, ResponseType } = require("@aps_sdk/authentication");
 const { dumpDesignProperties } = require("./lib/aps.js");
-const { ChatbotSession } = require("./lib/bedrock.js");
+const { ChatbotSession } = require("./lib/openai.js");
 
 const { APS_CLIENT_ID, APS_CLIENT_SECRET, APS_CALLBACK_URL, SERVER_SESSION_SECRET } = process.env;
 if (!APS_CLIENT_ID || !APS_CLIENT_SECRET || !APS_CALLBACK_URL || !SERVER_SESSION_SECRET) {
