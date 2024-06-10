@@ -1,6 +1,6 @@
 {
   "name": "aps-design-chatbot",
-  "description": "",
+  "description": "Simple chatbot for querying metadata of designs in Autodesk Platform Services using Amazon Bedrock.",
   "version": "0.0.0",
   "scripts": {
     "start": "node server.js"
