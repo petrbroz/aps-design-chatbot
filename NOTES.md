@@ -1,0 +1,12 @@
+- use RAG for querying design data?
+    - https://aws.amazon.com/what-is/retrieval-augmented-generation/
+    - https://github.com/aws-samples/amazon-bedrock-workshop/blob/main/06_OpenSource_examples/02_Langchain_Chatbot_examples/00_Chatbot_V3_Claude.ipynb
+
+- Not sure if RAG is the best option for a design data chatbot
+- _LLMs cannot count_ - they may have learned from training data that what typically follows after "1+1=" is "2" but they don't actually do any math
+- For structured data, how about using LLMs to generate actual queries and executing them?
+- For example, if the data is in a SQL database, use the LLM to:
+  - turn user questions into SQL queries
+  - turn SQL results into answers
+- See https://js.langchain.com/v0.2/docs/tutorials/sql_qa/
+- Problem: design data in APS isn't _completely_ structured

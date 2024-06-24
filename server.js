@@ -1,9 +1,10 @@
+const fse = require("fs-extra");
 const express = require("express");
 const session = require("cookie-session");
 const { SdkManagerBuilder } = require("@aps_sdk/autodesk-sdkmanager");
 const { AuthenticationClient, Scopes, ResponseType } = require("@aps_sdk/authentication");
 const { dumpDesignProperties } = require("./lib/aps.js");
-const { ChatbotSession } = require("./lib/bedrock.js");
+const { ChatbotSession } = require("./lib/chatbot.js");
 
 const { APS_CLIENT_ID, APS_CLIENT_SECRET, APS_CALLBACK_URL, SERVER_SESSION_SECRET } = process.env;
 if (!APS_CLIENT_ID || !APS_CLIENT_SECRET || !APS_CALLBACK_URL || !SERVER_SESSION_SECRET) {
@@ -73,14 +74,12 @@ app.post("/prompt/:urn", express.json(), async function (req, res, next) {
     try {
         let session = sessions.get(req.params.urn);
         if (!session) {
-            session = new ChatbotSession();
+            const sqliteDatabasePath = `tmp/${req.params.urn}.sqlite`;
+            if (!fse.existsSync(sqliteDatabasePath)) {
+                await dumpDesignProperties(req.params.urn, req.session.access_token, sqliteDatabasePath);
+            }
+            session = await ChatbotSession.init(sqliteDatabasePath);
             sessions.set(req.params.urn, session);
-            const csv = await dumpDesignProperties(req.params.urn, req.session.access_token);
-            await session.prompt([
-                "Here is a CSV table of design elements with various properties:",
-                csv,
-                "You are a data analyst providing answers to different queries related to this data."
-            ].join("\n\n"));
         }
         const answer = await session.prompt(req.body.question);
         res.json({ answer });

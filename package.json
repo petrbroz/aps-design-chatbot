@@ -15,8 +15,13 @@
     "@aps_sdk/authentication": "^0.1.0-beta.1",
     "@aps_sdk/autodesk-sdkmanager": "^0.0.7-beta.1",
     "@aps_sdk/model-derivative": "^0.1.0-beta.1",
-    "@aws-sdk/client-bedrock-runtime": "^3.588.0",
+    "@langchain/community": "^0.2.13",
+    "@langchain/openai": "^0.2.0",
     "cookie-session": "^2.1.0",
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "fs-extra": "^11.2.0",
+    "langchain": "^0.2.6",
+    "sqlite3": "^5.1.7",
+    "typeorm": "^0.3.20"
   }
 }
