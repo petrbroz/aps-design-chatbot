@@ -4,7 +4,7 @@ export function initChatbot(container, urn) {
             <div id="chatbot-history" style="position: relative; top: 0; left: 0; right: 0; height: 80%; overflow-y: auto; display: flex; flex-flow: column nowrap;">
             </div>
             <div id="chatbot-prompt" style="position: relative; left: 0; right: 0; bottom: 0; height: 20%; overflow-y: hidden; display: flex; flex-flow: column nowrap;">
-                <textarea id="chatbot-input" style="margin: 0.5em; margin-bottom: 0; height: 100%;">What are the IDs of the top 3 objects with the largest area?</textarea>
+                <textarea id="chatbot-input" style="margin: 0.5em; margin-bottom: 0; height: 100%;">What are the IDs of the top 3 objects with the largest area? Output the IDs as a JSON array.</textarea>
                 <div style="display: flex; flex-flow: row nowrap; align-items: center;">
                     <sl-button id="chatbot-send" variant="primary" style="margin: 0.5em; flex-grow: 1;">Send</sl-button>
                     <sl-icon-button id="chatbot-tips" name="question" label="Tips" style="margin: 0.5em 0.5em 0.5em 0;"></sl-icon-button>
@@ -12,13 +12,13 @@ export function initChatbot(container, urn) {
             </div>
             <sl-dialog id="chatbot-tips-dialog" label="Tips">
                 <sl-button class="example" size="small" style="margin: 0.5em" pill>
-                    What are the IDs of wall elements? Output the IDs as a JSON array.
+                    What are the IDs of the top 3 objects with the largest area? Output the IDs as a JSON array.
+                </sl-button>
+                <sl-button class="example" size="small" style="margin: 0.5em" pill>
+                    Give me the complete list of IDs of wall elements. Output the IDs as a JSON array.
                 </sl-button>
                 <sl-button class="example" size="small" style="margin: 0.5em" pill>
                     What is the average length of all wall elements?
-                </sl-button>
-                <sl-button class="example" size="small" style="margin: 0.5em" pill>
-                    What are the IDs of the top 3 objects with the largest area? Output the IDs as a JSON array.
                 </sl-button>
                 <sl-button class="example" size="small" style="margin: 0.5em" pill>
                     What is the sum of volumes of all wall elements?
