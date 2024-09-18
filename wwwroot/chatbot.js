@@ -79,7 +79,7 @@ function addLogEntry(title, message) {
     const card = document.createElement("sl-card");
     card.classList.add("card-header");
     card.style.margin = "0.5em";
-    message = message.replaceAll(/\[(\d+)(,\s+\d+)*\]/g, function (match) {
+    message = message.replaceAll(/\[(\d+)(,\s*\d+)*\]/g, function (match) {
         const dbids = JSON.parse(match);
         return `<a href="#" data-dbids="${dbids.join(",")}">${match}</a>`;
     });
