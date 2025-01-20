@@ -1,3 +1,4 @@
+const path = require("path");
 const fse = require("fs-extra");
 const express = require("express");
 const session = require("cookie-session");
@@ -74,7 +75,8 @@ app.post("/prompt/:urn", express.json(), async function (req, res, next) {
     try {
         let session = sessions.get(req.params.urn);
         if (!session) {
-            const sqliteDatabasePath = `tmp/${req.params.urn}.sqlite`;
+            await fse.ensureDir("tmp");
+            const sqliteDatabasePath = path.join("tmp", `${req.params.urn}.sqlite`);
             if (!fse.existsSync(sqliteDatabasePath)) {
                 await dumpDesignProperties(req.params.urn, req.session.access_token, sqliteDatabasePath);
             }
