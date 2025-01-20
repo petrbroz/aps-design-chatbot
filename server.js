@@ -2,6 +2,7 @@ const path = require("path");
 const fse = require("fs-extra");
 const express = require("express");
 const session = require("cookie-session");
+const morgan = require("morgan");
 const { SdkManagerBuilder } = require("@aps_sdk/autodesk-sdkmanager");
 const { AuthenticationClient, Scopes, ResponseType } = require("@aps_sdk/authentication");
 const { dumpDesignProperties } = require("./lib/aps.js");
@@ -19,6 +20,7 @@ const authenticationClient = new AuthenticationClient(sdk);
 const sessions = new Map(); // Cache of chatbot sessions indexed by design URNs
 
 let app = express();
+app.use(morgan("tiny"));
 app.use(express.static("wwwroot"));
 app.use(session({ secret: SERVER_SESSION_SECRET, maxAge: 24 * 60 * 60 * 1000 }));
 app.get("/auth/login", function (req, res) {
